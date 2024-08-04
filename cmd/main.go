@@ -1,25 +1,18 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/guilhermemena/agenda-zap-server/cmd/api"
 	"github.com/guilhermemena/agenda-zap-server/cmd/configs"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/guilhermemena/agenda-zap-server/storage"
 )
 
 func main() {
-	dbpool, err := pgxpool.New(context.Background(), configs.Envs.DBConnection)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer dbpool.Close()
+	db := storage.InitializeDB()
 
-	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.Port), dbpool)
+	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.Port), db)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

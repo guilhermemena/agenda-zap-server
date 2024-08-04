@@ -2,12 +2,14 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/guilhermemena/agenda-zap-server/handlers/user"
+	"github.com/guilhermemena/agenda-zap-server/storage"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type APIServer struct {
 	addr string
-	db *pgxpool.Pool
+	db   *pgxpool.Pool
 }
 
 func NewAPIServer(addr string, db *pgxpool.Pool) *APIServer {
@@ -15,11 +17,14 @@ func NewAPIServer(addr string, db *pgxpool.Pool) *APIServer {
 }
 
 func (s *APIServer) Run() error {
-	app := fiber.New()
+	var userStore = storage.NewUserStorage(s.db)
+	var userHandler = user.NewUserHandler(*userStore)
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	app := fiber.New()
+	api := app.Group("/api")
+	auth := api.Group("/auth")
+
+	auth.Post("/register", userHandler.CreateUser)
 
 	return app.Listen(s.addr)
 }
