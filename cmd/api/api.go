@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/guilhermemena/agenda-zap-server/cmd/api/middleware"
 	"github.com/guilhermemena/agenda-zap-server/handlers/user"
 	"github.com/guilhermemena/agenda-zap-server/storage"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -22,9 +23,14 @@ func (s *APIServer) Run() error {
 
 	app := fiber.New()
 	api := app.Group("/api")
-	auth := api.Group("/auth")
+	v1 := api.Group("/v1")
 
-	auth.Post("/register", userHandler.CreateUser)
+	auth := api.Group("/auth")
+	auth.Post("/register", userHandler.HandleRegister)
+	auth.Post("/login", userHandler.HandleLogin)
+
+	users := v1.Group("/users")
+	users.Get("/me", middleware.WithJWTAuth(userHandler.HandleMe, *userStore))
 
 	return app.Listen(s.addr)
 }
