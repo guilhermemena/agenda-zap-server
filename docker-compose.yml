@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  agenda-zap-server-db:
+    image: bitnami/postgresql
+    ports:
+      - 54320:5432
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=agendazap
