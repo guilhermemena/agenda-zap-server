@@ -16,6 +16,9 @@ type Config struct {
 	DBName       string
 	DBConnection string
 
+	JWTSecret              string
+	JWTExpirationInSeconds int64
+
 	Port string
 }
 
@@ -30,6 +33,9 @@ func initConfig() Config {
 	dbPort := getEnvAsInt("DB_PORT", 5432)
 	dbName := getEnv("DB_NAME", "postgres")
 
+	JTWSecret := getEnv("JWT_SECRET", "secret")
+	JWTExpirationInSeconds := getEnvAsInt("JWT_EXPIRATION_IN_SECONDS", 3600*24*7)
+
 	dbConnection := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", dbUser, dbPassword, dbAddress, dbPort, dbName)
 
 	Port := getEnv("PORT", "3000")
@@ -42,6 +48,9 @@ func initConfig() Config {
 		DBName:       dbName,
 		DBConnection: dbConnection,
 		Port:         Port,
+
+		JWTSecret:              JTWSecret,
+		JWTExpirationInSeconds: JWTExpirationInSeconds,
 	}
 }
 
