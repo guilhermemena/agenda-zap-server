@@ -5,5 +5,7 @@ CREATE TABLE whatsapp_credentials (
   is_connected BOOLEAN DEFAULT FALSE,
   session_initiated_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  user_id uuid,
+  CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 )
